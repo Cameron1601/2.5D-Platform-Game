@@ -9,15 +9,23 @@ public class Enemy : MonoBehaviour
     public float chaseRange = 5;
     public float attackRange = 2;
     public Animator animator;
-    public float speed = 2;
+    public float speed = 3;
+    public int health;
+    public int maxHealth;
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player").transform;
+        health = maxHealth;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (PlayerManager.gameOver)
+        {
+            animator.enabled = false;
+            this.enabled = false;
+        }
         float distance = Vector3.Distance(transform.position, target.position);
 
         if (currentState == "IdleState")
@@ -52,6 +60,7 @@ public class Enemy : MonoBehaviour
 
         }
         else if (currentState == "AttackState")
+
         {
             animator.SetBool("isAttacking", true);
             if (distance > attackRange)
@@ -61,4 +70,25 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        currentState = "ChaseState";
+
+        if (health < 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        // death animation
+        animator.SetTrigger("isDead");
+        // disable script and collider
+        GetComponent<CapsuleCollider>().enabled = false;
+        this.enabled = false;
+    }
+
 }

@@ -18,6 +18,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PlayerManager.gameOver)
+        {
+            animator.SetTrigger("die");
+            this.enabled = false;
+        }
         gameObject.tag = "Player";
 
         //movement commands
